@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Edit product</h3>
+    <form method="POST" action="/products/<%= product._id%>?_method=PUT">
+        <input name="product[title]" value="<%= product.title%>">
+        <br><br>
+        <textarea name="product[description]"><%= product.description%></textarea>
+        <br><br>
+        <input name="product[price]" value="<%= product.price%>" type="number">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</body>
+</html>

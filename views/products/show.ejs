@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Product Detials</h3>
+    <ul>
+        <li> <%= product.title %></li>
+        <li> <%= product.description %></li>
+        <li> &#8377;<%= product.price?product.price.toLocaleString("en-IN"):"N/A" %></li>
+        <form method="GET" action="/products/<%=product._id%>/edit">
+            <button>Edit</button>
+        </form>
+        <br><br>
+        <form method="POST" action="/products/<%=product._id%>?_method=DELETE">
+            <button>Delete</button>
+        </form>
+    </ul>
+</body>
+</html>
