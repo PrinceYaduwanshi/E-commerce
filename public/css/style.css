@@ -1,0 +1,48 @@
+body{
+    font-family: "Montserrat";
+    display: flex;
+    flex-direction: column;
+}
+.navbar{
+    height: 5rem;
+    width: 100%;
+}
+
+
+/* CARD STYLING */
+.card{ 
+    margin-left: 3.5rem;
+    margin-top: 2rem;
+}
+.product-link{
+    text-decoration: none;
+    color: #EFEFEF;
+}
+.view-btn{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.view-btn button{
+    width: 100%;
+    border: none;
+    border-radius: 2rem;
+    color: beige;
+}
+.card{
+    padding: 0.50rem !important;
+}
+.card-img-top{
+    border-radius: 0.50rem !important;
+}
+.card-title{
+    color: slategrey;
+}
+.card-img-overlay{
+    opacity: 0;
+}
+.card-img-overlay:hover{
+    opacity: 0.2;
+    background-color: white;
+}
