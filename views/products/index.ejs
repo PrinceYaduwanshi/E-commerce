@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<% layout("./layouts/boilerplate") -%>
 <body>
-    <h3>Item List</h3>
     <ul>
         <% for( let product of products ){ %>
             <li> <a href="/products/<%=product._id %>"> <%= product.title %></a></li>
@@ -14,12 +7,7 @@
             <li> <%= product.price %> </li> -->
         <% } %>
     </ul>
-
-    <form method="GET" action="/products/new">
-        <button>Add new Product</button>
-    </form>>
-    
 </body>
-</html>
+
 
 
