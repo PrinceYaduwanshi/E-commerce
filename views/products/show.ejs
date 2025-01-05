@@ -1,16 +1,21 @@
 <% layout("./layouts/boilerplate") -%>
 <body>
-    <h3>Product Detials</h3>
-    <ul>
-        <li> <%= product.title %></li>
-        <li> <%= product.description %></li>
-        <li> &#8377;<%= product.price?product.price.toLocaleString("en-IN"):"N/A" %></li>
-        <form method="GET" action="/products/<%=product._id%>/edit">
-            <button>Edit</button>
-        </form>
-        <br><br>
-        <form method="POST" action="/products/<%=product._id%>?_method=DELETE">
-            <button>Delete</button>
-        </form>
-    </ul>
+    <div class="row">
+        <div class="mt-5 offset-2">
+            <h3><%= product.title %></h3>
+            <div class="card col-4 offset-2 show-card">
+                <img src="<%=product.image%>" class="card-img-top show-img" alt="product-image">
+                <div class="card-body">
+                  <p class="card-text"><i><%= product.description %></i></p>
+                  <p class="card-text">&#8377;<%= product.price?product.price.toLocaleString("en-IN"):"N/A" %></p>
+                </div>
+              </div>
+              <div class="btns mb-3 col-3">
+                <a href="/products/<%=product._id%>/edit" class="btn bg-secondary offset-3 col-3">Edit</a>
+                <form method="post" action="/products/<%=product._id%>?_method=DELETE">
+                    <button class="btn bg-secondary offset-5">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>

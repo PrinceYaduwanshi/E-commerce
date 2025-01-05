@@ -1,13 +1,32 @@
 <% layout("./layouts/boilerplate") -%>
 <body>
+    <div class="row">
+    <div class="mt-5 offset-2 col-8">
     <h3>Edit product</h3>
-    <form method="POST" action="/products/<%= product._id%>?_method=PUT">
-        <input name="product[title]" value="<%= product.title%>">
-        <br><br>
-        <textarea name="product[description]"><%= product.description%></textarea>
-        <br><br>
-        <input name="product[price]" value="<%= product.price%>" type="number">
-        <br><br>
-        <button>Submit</button>
+    <form method="POST" action="/products/<%= product._id%>?_method=PUT" novalidate class="needs-validation">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input value="<%= product.title %>" name="product[title]" type="text" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input value="<%= product.description %>" name="product[description]" type="text" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Image Link</label>
+            <input value="<%= product.image%>"name="product[image]" type="text" class="form-control" required>
+        </div>
+
+        <div class="mb-3 col-4">
+            <label for="price" class="form-label">Enter Price</label>
+            <input value="<%= product.price %>" name="product[price]" type="number" class="form-control" required>
+        </div>
+
+          <button type="submit" class="btn bg-secondary mt-3">Submit</button>
     </form>
+    </div>
+    </div>
 </body>

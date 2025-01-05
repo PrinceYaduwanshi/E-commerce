@@ -2,12 +2,40 @@ body{
     font-family: "Montserrat";
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 .navbar{
     height: 5rem;
     width: 100%;
 }
 
+/* FOOTER */
+.f-info-links a{
+    text-decoration: none;
+    color: black;
+    width: 100%;
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+}
+.f-info{
+    height: 8rem;
+    margin-top: 2rem;
+    background-color: #ebebeb;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    
+}
+.f-info-socials i{
+    font-size: 1.5rem;
+    margin-right: 1.5rem;
+}
+.f-info-brand{
+    font-weight: 600;
+}
 
 /* CARD STYLING */
 .card{ 
@@ -18,21 +46,26 @@ body{
     text-decoration: none;
     color: #EFEFEF;
 }
-.view-btn{
+.view-btn {
     width: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     margin-left: 1rem;
 }
 .view-btn button{
     width: 100%;
     border: none;
-    border-radius: 0.90rem;
+    border-radius: 5rem;
     color: whitesmoke;
 }
 .card{
     padding: 0.50rem !important;
+    opacity: 1;
+}
+.card:hover{
+    opacity: 0.8;
+    background-color: white;
 }
 .card-img-top{
     border-radius: 0.50rem !important;
@@ -40,10 +73,24 @@ body{
 .card-title{
     color: slategrey;
 }
-.card-img-overlay{
-    opacity: 0;
+
+
+/* BUTTONS */
+.btn{
+    color: whitesmoke;
+    border: none;
+  }
+.btns{
+    display: flex;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: left;
+
 }
-.card-img-overlay:hover{
-    opacity: 0.2;
-    background-color: white;
+
+.show-img{
+    height: 70vh;
+    width: 30vw;
+    margin-left: 1rem;
+    margin-top: 1rem;
 }

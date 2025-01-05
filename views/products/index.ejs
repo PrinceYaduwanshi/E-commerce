@@ -1,31 +1,66 @@
 <% layout("./layouts/boilerplate") -%>
 <body>
-
-    <div class="row row-col-lg-3 row-col-md-2 row-col-sm-1 mt-3">
+  <div class="row row-col-lg-3 row-col-md-2 row-col-sm-1 mt-3">
         <% for( let product of products ){ %> 
       
             <div class="card" style="width: 20rem;">
                 <a href="/products/<%= product._id %>" class="product-link">
                 <img src="<%=product.image%>" class="card-img-top" alt="product-image" style="height: 20rem;">
-                <div class="card-img-overlay"></div>
+                <!-- <div class="card-img"></div> -->
                 </a>
                 <div class="card-body">
                   <h5 class="card-title"><b><%=product.title%></b></h5>
                   <div class="view-btn">
-                    <button class="bg-secondary">
-                      <a class="product-link" href="/products/<%= product._id %>">View Product</a>
-                    </button>
-                    <!-- <button class="bg-secondary">
-                      <a class="product-link" href="/cart/add/<%= product._id %>">Add to cart</a>
-                    </button> -->
+                      <a class="product-link btn" href="/products/<%= product._id %>">
+                        <button class="bg-secondary">
+                        View Product
+                        </button>
+                      </a>
+                      <a class="product-link btn" href="/cart/add/<%= product._id %>">
+                        <button class="bg-secondary">
+                        Add to Cart
+                        </button>
+                      </a>
                   </div>
                 </div>  
               </div>
 
         <% } %>
     </div>
-
 </body>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="row row-col-lg-3 row-col-md-2 row-col-sm-1 mt-3">
+  <% for (let product of products) { %>
+    <div class="card" style="width: 20rem;">
+      <a href="/products/<%= product.id %>" class="product-link">
+        <img src="<%= product.image %>" class="card-img-top" alt="product-image" style="height: 20rem;">
+        <div class="card-img-overlay"></div>
+      </a>
+      <div class="card-body">
+        <h5 class="card-title"><b><%= product.title %></b></h5>
+        <div class="view-btn">
+          Button 1: View Product
+          <a class="btn bg-secondary product-link" href="/products/<%= product.id %>">View Product</a>
+          Button 2: Add to Cart
+          <a class="btn bg-secondary product-link" href="/cart/add/<%= product.id %>">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>   -->
 
 

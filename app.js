@@ -93,6 +93,10 @@ app.delete("/products/:id" , async(req,res)=>{
     let{id} = req.params;
     const deleteproduct = await Product.findByIdAndDelete(id);
     res.redirect("/products");
+});
+
+app.get("/cart/add/:id" , (req , res)=>{
+    res.send("Added to cart");
 })
 
 
