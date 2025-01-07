@@ -8,11 +8,20 @@
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input value="<%= product.title %>" name="product[title]" type="text" class="form-control" required>
+            <div class="invalid-feedback">
+                Enter a Valid Title
+              </div>
+              <div class="valid-feedback">
+                Cool title
+              </div>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <input value="<%= product.description %>" name="product[description]" type="text" class="form-control" required>
+            <div class="invalid-feedback">
+                Enter a Valid Description
+              </div>
         </div>
 
         <div class="mb-3">
@@ -23,6 +32,9 @@
         <div class="mb-3 col-4">
             <label for="price" class="form-label">Enter Price</label>
             <input value="<%= product.price %>" name="product[price]" type="number" class="form-control" required>
+            <div class="invalid-feedback">
+                Please enter Price
+              </div>
         </div>
 
           <button type="submit" class="btn bg-secondary mt-3">Submit</button>
