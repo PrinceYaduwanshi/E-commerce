@@ -8,3 +8,10 @@ module.exports.productSchema = Joi.object({
         price : Joi.number().required().min(0)
     }).required()
 })
+
+module.exports.reviewSchema = Joi.object({
+    review : Joi.object({
+        rating : Joi.number().required().default(1),
+        comment : Joi.string().required()
+    }).required()
+})

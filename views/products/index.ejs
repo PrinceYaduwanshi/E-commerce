@@ -16,11 +16,11 @@
                         View Product
                         </button>
                       </a>
-                      <a class="product-link btn" href="/cart/add/<%= product._id %>">
+                      <form method="POST" action="/cart/add/<%= product._id %>" class="product-link btn">
                         <button class="bg-secondary">
                         Add to Cart
                         </button>
-                      </a>
+                      </form>
                   </div>
                 </div>  
               </div>

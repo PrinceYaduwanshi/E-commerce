@@ -1,0 +1,36 @@
+<% layout("./layouts/boilerplate") -%>
+<body>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let i = 0; i < cartItems.length; i++) { %>
+            <tr>
+                <th scope="row"><%= i + 1 %>.</th>
+                <td><a href="/products/<%=cartItems[0].product._id%>"><img src="<%= cartItems[i].product.image %>" class="card-img-top" alt="product-image" style="height: 3rem; width: 3rem;"></a></td>
+                <td><a href="/products/<%=cartItems[0].product._id%>" style="text-decoration: none; color: black;"><%= cartItems[i].product.title %></a></td>
+                <td><%= cartItems[i].product.price %></td>
+                <td><form>
+                  <button class="btn bg-secondary">Delete</button>
+                </form></td>
+            </tr>
+            <% } %>
+          </tbody>
+      </table>
+        <!-- <% for(cartItem of cartItems) { %>
+            <div class="card ms-8 mb-3 col-4 offset-2" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title"><%= cartItem.product.title %></h5>
+                <img src="<%= cartItem.product.image%>" class="card-img-top" alt="product-image">
+                </div>   
+            </div>
+        <% } %> -->
+        
+</body>
