@@ -29,12 +29,9 @@ dotenv.config();
 const Product = require("./models/product.js");
 const Review = require("./models/review.js");
 const Cart = require("./models/cart.js");
-const {productSchema , reviewSchema } = require("./schema.js");
-
-
+const {productSchema , reviewSchema , cartSchema} = require("./schema.js");
 
 const port = process.env.PORT;
-
 
 main()
     .then(()=>{
@@ -51,9 +48,16 @@ app.listen( port , ()=>{
     console.log(`app is running on port ${port}`);
 });
 
-// handling errors
-const validateProduct = (req,res,next)=>{
-    let{error} = productSchema.validate(req.body);
+// ROUTES
+const productRoutes = require("./routes/product.js");
+const reviewRoutes = require("./routes/review.js");
+
+app.use("/products" , productRoutes);
+app.use("/products/:id/review" , reviewRoutes);
+
+const validateCart = (req,res,next)=>{
+    let{error} = cartSchema.validate(req.body);
+    console.log(req.body);
     if(error){
         let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(404 , errMsg);
@@ -62,124 +66,68 @@ const validateProduct = (req,res,next)=>{
     }
 }
 
-const validateReview = (req,res,next)=>{
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(404 , errMsg);
-    }else{
-        next();
-    }
-}
-
-// index route
-app.get( "/products" , wrapAsync(async(req,res) =>{
-    let products = await Product.find({});
-    res.render("products/index.ejs" , {products});  
-}))
-
-// CRUD OPERRATIONS
-
-// create route
-// new route
-app.get("/products/new" , (req,res)=>{
-    res.render("products/new.ejs");
-})
-// add route
-app.post(("/products") , validateProduct, wrapAsync(async(req,res)=>{
-    let newproduct = new Product(req.body.product);
-    await newproduct.save();
-    res.redirect("/products");  
-}));
-
-app.get("/products/cart/" , wrapAsync(async(req,res)=>{
+app.get("/cart" ,wrapAsync(async(req,res)=>{
     
     let cart = await Cart.findOne({}).populate("items.product");
-    console.log(cart);
     if(cart){
-        let cartItems = cart.items;
-        console.log(cartItems);
-        let length = cartItems.length;
-        console.log(length);
-        res.render("cart.ejs" , {cartItems});
+        if(cart.items.length > 0){
+            res.render("cart/cartShow.ejs" , {cart});
+        }else{
+            await Cart.findByIdAndDelete(cart._id);
+            res.render("cart/continueShopping.ejs");
+        }
     }else{
-        res.send("no cart exists");
+        res.render("cart/continueShopping.ejs");
     }
-      
-    // console.log(...cartItems);
+})) 
+
+app.post("/cart/:id",validateCart, wrapAsync(async (req, res) => {
     
-}))
-
-// show route
-app.get("/products/:id" , wrapAsync(async(req,res)=>{
-    let{id} = req.params;
-    const product = await Product.findById(id).populate("reviews");
-    res.render("products/show.ejs" , {product});
-}));
-
-
-// update route
-app.get("/products/:id/edit" , wrapAsync(async(req,res)=>{
-    let{id} = req.params;
-    const product = await Product.findById(id);
-    res.render("products/edit.ejs" , {product});
-}));
-app.put("/products/:id", validateProduct, wrapAsync(async(req,res)=>{
-    let{id} = req.params;
-    const editproduct = req.body.product;
-    if(!editproduct){
-        throw new ExpressError(404 , "Body Empty");
-    }
-    await Product.findByIdAndUpdate(id , {...editproduct});
-    res.redirect(`/products/${id}`);
-}));
-
-// destroy route
-app.delete("/products/:id" , wrapAsync(async(req,res)=>{
-    let{id} = req.params;
-    const deleteproduct = await Product.findByIdAndDelete(id);
-    res.redirect("/products");
-}));
-
-// Review route
-
-// post review
-app.post("/products/:id/review" , validateReview , wrapAsync(async(req, res)=>{
-    let {id} = req.params;
-    // console.log(id);
-    let product = await Product.findById(id);
-    let newReview = new Review(req.body.review);
-    product.reviews.push(newReview);
-
-    await newReview.save();
-    await product.save();
-    // console.log("Review Added");
-    res.redirect(`/products/${product._id}`);
-}))
-
-// delete review
-app.delete("/products/:id/review/:reviewId" , wrapAsync( async(req,res)=>{
-    let { id , reviewId } = req.params;
-    await Product.findByIdAndUpdate( id , {$pull :{ reviews : reviewId}});
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/products/${id}`);
-}))
-
-
-app.post("/cart/add/:id", wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const cart = await Cart.findOne({}); // Assuming a single cart for simplicity
+    let quantity  = req.body.items[0].quantity;
+
+    quantity = parseInt(quantity, 10);
+
+    if (isNaN(quantity) || quantity <= 0) {
+        return res.status(400).send("Invalid quantity");
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+        throw new ExpressError(404, "Product not found");
+    }
+
+    const cart = await Cart.findOne({});
+
     if (cart) {
-        cart.items.push({ product: id });
+        const itemIndex = cart.items.findIndex(item => item.product.toString() === id);
+        if (itemIndex > -1) {
+            cart.items[itemIndex].quantity += quantity;
+        } else {
+            cart.items.push({ product: id, quantity: quantity });
+        }
         await cart.save();
-    }else{
-        const newCart = new Cart({ items: [{product : id}] });
+    } else {
+        const newCart = new Cart({ items: [{ product: id, quantity: quantity }] });
         await newCart.save();
     }
-    
+
     res.redirect("/products");
 }));
+
+
+app.delete("/cart/:cartId/:id" , (wrapAsync(async (req, res)=>{
+    let { cartId , id } = req.params;
+
+    const cart = await Cart.findByIdAndUpdate( cartId , {$pull :{ items : {product : id}}});
+
+    if (cart.items.length === 0) {
+        await Cart.findByIdAndDelete(cartId);
+    }
+    res.redirect("/cart");
+
+})));
+
 
 
 app.all("*" , (req,res,next)=>{

@@ -16,17 +16,18 @@
                         View Product
                         </button>
                       </a>
-                      <form method="POST" action="/cart/add/<%= product._id %>" class="product-link btn">
-                        <button class="bg-secondary">
-                        Add to Cart
-                        </button>
-                      </form>
+                      <form action="/cart/<%= product._id %>" method="POST">
+                        <input type="number" name="items[0][quantity]" value="1" min="1"> <!-- Default quantity to 1 -->
+                        <input type="text" name="items[0][product]" value="<%=product._id%>" style="display: none;">
+                        <button type="submit" class="bg-secondary">Add to Cart</button>
+                    </form>
                   </div>
                 </div>  
               </div>
 
         <% } %>
     </div>
+
 </body>
 
 
