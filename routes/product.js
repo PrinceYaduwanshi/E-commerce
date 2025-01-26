@@ -37,6 +37,7 @@ router.get("/new" , (req,res)=>{
 router.post("/" , validateProduct, wrapAsync(async(req,res)=>{
     let newproduct = new Product(req.body.product);
     await newproduct.save();
+    req.flash("success" , "Product added Successfully");
     res.redirect("/products");  
 }));
 
@@ -44,6 +45,12 @@ router.post("/" , validateProduct, wrapAsync(async(req,res)=>{
 router.get("/:id" , wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const product = await Product.findById(id).populate("reviews");
+
+    if(!product){
+        req.flash("error" , "Product not found");
+        res.redirect("/products");
+    }
+
     res.render("products/show.ejs" , {product});
 }));
 
@@ -51,6 +58,12 @@ router.get("/:id" , wrapAsync(async(req,res)=>{
 router.get("/:id/edit" , wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const product = await Product.findById(id);
+
+    if(!product){
+        req.flash("error" , "Product not found");
+        res.redirect("/products");
+    }
+    
     res.render("products/edit.ejs" , {product});
 }));
 router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
@@ -60,6 +73,9 @@ router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
         throw new ExpressError(404 , "Body Empty");
     }
     await Product.findByIdAndUpdate(id , {...editproduct});
+
+    req.flash("success" , "Product Updated");
+
     res.redirect(`/products/${id}`);
 }));
 
@@ -67,6 +83,9 @@ router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
 router.delete("/:id" , wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const deleteproduct = await Product.findByIdAndDelete(id);
+
+    req.flash("success" , "Product Deleted");
+
     res.redirect("/products");
 }));
 

@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 // require middlewares 
 const wrapAsync = require("./utils/wrapAsync.js");
@@ -48,9 +50,31 @@ app.listen( port , ()=>{
     console.log(`app is running on port ${port}`);
 });
 
+// config sessions
+const sessionOptions = {
+    secret: "secretcode" , 
+    resave : false,
+    saveUninitialized : true,
+    cookie:{
+        expires : Date.now() + 7 * 24 * 60 * 60 * 1000, //in ms
+        maxAge : 7 * 24 * 60 * 60 * 1000,
+        httpOnly : true,
+    }
+}
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req , res , next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
+
+
 // ROUTES
 const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
+const { connect } = require("http2");
 
 app.use("/products" , productRoutes);
 app.use("/products/:id/review" , reviewRoutes);
@@ -111,6 +135,7 @@ app.post("/cart/:id",validateCart, wrapAsync(async (req, res) => {
         const newCart = new Cart({ items: [{ product: id, quantity: quantity }] });
         await newCart.save();
     }
+    req.flash("success" , "Item Added to Cart");
 
     res.redirect("/products");
 }));
@@ -124,6 +149,9 @@ app.delete("/cart/:cartId/:id" , (wrapAsync(async (req, res)=>{
     if (cart.items.length === 0) {
         await Cart.findByIdAndDelete(cartId);
     }
+
+    req.flash("success" , "Item Removed");
+
     res.redirect("/cart");
 
 })));

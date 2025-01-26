@@ -1,4 +1,39 @@
 <% layout("./layouts/boilerplate") -%>
+<style>
+  .styled-input {
+    height: 2rem; /* Smaller height */
+    font-size: 1rem; /* Adjust font size */
+    padding: 0.5rem; /* Reduced padding for smaller size */
+    width: 5rem; /* Smaller width */
+    border-radius: 0.25rem; /* Slightly rounded corners */
+    text-align: center; /* Centering the number inside */
+  }
+
+  .styled-input::-webkit-outer-spin-button,
+  .styled-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .input-group .btn {
+  height: 2rem; /* Match button height with the input */
+  width: 2rem; /* Set width of buttons */
+  font-size: 1.25rem; /* Larger font for buttons */
+  padding: 0.25rem; /* Padding inside the buttons */
+  background-color: transparent; /* Make background transparent */
+  border: 1px solid transparent; /* Remove border */
+  color: #000; /* Text color */
+  box-shadow: none; /* Remove shadow */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.input-group .btn:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Light background color on hover */
+  color: #000; /* Keep text color visible */
+}
+
+</style>
+
 <body>
   <div class="row row-col-lg-3 row-col-md-2 row-col-sm-1 mt-3">
         <% for( let product of products ){ %> 
@@ -11,15 +46,21 @@
                 <div class="card-body">
                   <h5 class="card-title"><b><%=product.title%></b></h5>
                   <div class="view-btn">
-                      <a class="product-link btn" href="/products/<%= product._id %>">
-                        <button class="bg-secondary">
-                        View Product
-                        </button>
-                      </a>
                       <form action="/cart/<%= product._id %>" method="POST">
-                        <input type="number" name="items[0][quantity]" value="1" min="1"> <!-- Default quantity to 1 -->
-                        <input type="text" name="items[0][product]" value="<%=product._id%>" style="display: none;">
-                        <button type="submit" class="bg-secondary">Add to Cart</button>
+                        <div class="d-flex align-items-center">
+                          <!-- Quantity Controls -->
+                          <div class="input-group me-3">
+                            <button class="btn btn-transparent decrement" type="button" data-product-id="<%= product._id %>">-</button>
+                            <input type="number" name="items[0][quantity]" value="1" min="1" class="form-control styled-input quantity-input" id="quantity-<%= product._id %>" />
+                            <button class="btn btn-transparent increment" type="button" data-product-id="<%= product._id %>">+</button>
+                          </div>
+          
+                          <!-- Hidden Product ID -->
+                          <input type="text" name="items[0][product]" value="<%= product._id %>" style="display: none;" />
+          
+                          <!-- Submit Button -->
+                          <button type="submit" class="btn btn-secondary">Add to Cart</button>
+                        </div>
                     </form>
                   </div>
                 </div>  
@@ -27,7 +68,6 @@
 
         <% } %>
     </div>
-
 </body>
 
 
