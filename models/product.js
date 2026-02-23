@@ -9,6 +9,9 @@ const productSchema = new Schema({
     },
     image:{
         type:String,
+        
+        default: "https://www.huber-online.com/daisy_website_files/_processed_/8/0/csm_no-image_d5c4ab1322.jpg",
+
         set:(v) => v ==="" ? "https://www.huber-online.com/daisy_website_files/_processed_/8/0/csm_no-image_d5c4ab1322.jpg" : v,
     },
     description:{

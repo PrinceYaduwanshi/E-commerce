@@ -18,6 +18,8 @@ const initDB = async()=>{
     await Product.deleteMany({});
     await Product.insertMany(initData.data);
     console.log("data initialized");
-    initData.data = initData.data.map((obj)=>({...obj ,}))
+    // console.log("before :", initData.data);
+    // initData.data = initData.data.map((obj)=>({...obj ,}))
+    console.log("data :", initData.data);
 }
 initDB();

@@ -7,7 +7,7 @@
 
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input value="<%= product.title %>" name="product[title]" type="text" class="form-control" required>
+            <input value="<%= product.title %>" name="product[title]" type="text" pattern="[a-zA-Z\s]+" class="form-control" required>
             <div class="invalid-feedback">
                 Enter a Valid Title
               </div>
@@ -18,7 +18,7 @@
 
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <input value="<%= product.description %>" name="product[description]" type="text" class="form-control" required>
+            <input value="<%= product.description %>" name="product[description]" type="text" pattern="[a-zA-Z0-9\s]+" class="form-control" required>
             <div class="invalid-feedback">
                 Enter a Valid Description
               </div>

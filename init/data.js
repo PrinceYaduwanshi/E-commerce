@@ -13,7 +13,7 @@ const sampleProducts = [
     },
     {
         title:"Avocado",
-        image:"https://media.istockphoto.com/id/2168638529/photo/fresh-avocado-fruit-on-a-wooden-board.jpg?s=2048x2048&w=is&k=20&c=btYk3FA__PLT5jQlonTVbQdxYfiOuz-227WA35Im-CA=",
+        image:"https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?q=80&w=1075&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         description:"Healthy",
         price:500
     },

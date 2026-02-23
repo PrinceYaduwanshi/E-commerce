@@ -72,7 +72,7 @@ router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
     if(!editproduct){
         throw new ExpressError(404 , "Body Empty");
     }
-    await Product.findByIdAndUpdate(id , {...editproduct});
+    await Product.findByIdAndUpdate(id , editproduct);
 
     req.flash("success" , "Product Updated");
 

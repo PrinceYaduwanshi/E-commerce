@@ -74,7 +74,7 @@ app.use((req , res , next)=>{
 // ROUTES
 const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
-const { connect } = require("http2");
+
 
 app.use("/products" , productRoutes);
 app.use("/products/:id/review" , reviewRoutes);
@@ -93,6 +93,11 @@ const validateCart = (req,res,next)=>{
 app.get("/cart" ,wrapAsync(async(req,res)=>{
     
     let cart = await Cart.findOne({}).populate("items.product");
+
+    // handling null items ie items which have been deleted from the products collection but are still present in the cart
+    cart.items = cart.items.filter(item => item.product !== null);
+    await cart.save();
+    
     if(cart){
         if(cart.items.length > 0){
             res.render("cart/cartShow.ejs" , {cart});
@@ -164,6 +169,6 @@ app.all("*" , (req,res,next)=>{
 
 app.use((err,req,res,next)=>{
     let{statusCode=500 , message="some error occured"} = err;
-    res.status(statusCode).render("error.ejs",{message});
+    res.status(statusCode).render("error.ejs",{err});
     // res.status(statusCode).send(message);
 })

@@ -3,8 +3,8 @@ const JoiObjectId = require("joi-objectid")(Joi);
 
 module.exports.productSchema = Joi.object({
     product : Joi.object({
-        title : Joi.string().required(),
-        description : Joi.string().required(),
+        title : Joi.string().pattern(/^[a-zA-Z\s]+$/).required(),
+        description : Joi.string().pattern(/^[a-zA-Z0-9\s]+$/).required(),
         image : Joi.string().allow("",null),
         price : Joi.number().required().min(0)
     }).required()
