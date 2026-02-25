@@ -81,13 +81,17 @@ app.use("/products/:id/review" , reviewRoutes);
 
 const validateCart = (req,res,next)=>{
     let{error} = cartSchema.validate(req.body);
-    console.log(req.body);
+    
     if(error){
         let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(404 , errMsg);
-    }else{
-        next();
+        throw new ExpressError(400 , errMsg);
     }
+
+    // if(req.params.id != req.body.items[0].product){
+    //     throw new ExpressError(400 , "Product ID in the URL does not match the Product ID in the request body");
+    // }
+
+    next();
 }
 
 app.get("/cart" ,wrapAsync(async(req,res)=>{
@@ -95,8 +99,9 @@ app.get("/cart" ,wrapAsync(async(req,res)=>{
     let cart = await Cart.findOne({}).populate("items.product");
 
     // handling null items ie items which have been deleted from the products collection but are still present in the cart
-    cart.items = cart.items.filter(item => item.product !== null);
-    await cart.save();
+    // handled by the post middleware in product model which deletes the items from the cart when a product is deleted
+    // cart.items = cart.items.filter(item => item.product !== null);
+    // await cart.save();
     
     if(cart){
         if(cart.items.length > 0){
@@ -110,25 +115,31 @@ app.get("/cart" ,wrapAsync(async(req,res)=>{
     }
 })) 
 
-app.post("/cart/:id",validateCart, wrapAsync(async (req, res) => {
+app.post("/cart/add/:id", validateCart, wrapAsync(async (req, res) => {
     
     const { id } = req.params;
-    let quantity  = req.body.items[0].quantity;
+    const product = await Product.findById(id);
 
-    quantity = parseInt(quantity, 10);
+    if(!product){
+        const err = new ExpressError(404, "Product Not Found");
+        return res.status(404).render("error.ejs",{err});
+    }
+
+    let quantity  = Number(req.body.quantity) || 1;
 
     if (isNaN(quantity) || quantity <= 0) {
         return res.status(400).send("Invalid quantity");
     }
 
-    const product = await Product.findById(id);
-    if (!product) {
-        throw new ExpressError(404, "Product not found");
-    }
-
     const cart = await Cart.findOne({});
 
     if (cart) {
+        
+        if(cart.items.length >= 12){
+            let err = new ExpressError(400 , "Cart Limit Exceeded! You can only add 12 items to the cart.");
+            return res.status(400).render("error.ejs",{err});
+        }
+
         const itemIndex = cart.items.findIndex(item => item.product.toString() === id);
         if (itemIndex > -1) {
             cart.items[itemIndex].quantity += quantity;
@@ -144,7 +155,6 @@ app.post("/cart/:id",validateCart, wrapAsync(async (req, res) => {
 
     res.redirect("/products");
 }));
-
 
 app.delete("/cart/:cartId/:id" , (wrapAsync(async (req, res)=>{
     let { cartId , id } = req.params;

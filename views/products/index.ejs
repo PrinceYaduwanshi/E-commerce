@@ -46,17 +46,17 @@
                 <div class="card-body">
                   <h5 class="card-title"><b><%=product.title%></b></h5>
                   <div class="view-btn">
-                      <form action="/cart/<%= product._id %>" method="POST">
+                      <form action="/cart/add/<%= product._id %>" method="POST">
                         <div class="d-flex align-items-center">
                           <!-- Quantity Controls -->
                           <div class="input-group me-3">
                             <button class="btn btn-transparent decrement" type="button" data-product-id="<%= product._id %>">-</button>
-                            <input type="number" name="items[0][quantity]" value="1" min="1" class="form-control styled-input quantity-input" id="quantity-<%= product._id %>" />
+                            <input type="number" name="quantity" value="1" min="1" class="form-control styled-input quantity-input" id="quantity-<%= product._id %>" />
                             <button class="btn btn-transparent increment" type="button" data-product-id="<%= product._id %>">+</button>
                           </div>
           
                           <!-- Hidden Product ID -->
-                          <input type="text" name="items[0][product]" value="<%= product._id %>" style="display: none;" />
+                          <!-- <input type="text" name="items[0][product]" value="<%= product._id %>" style="display: none;" /> -->
           
                           <!-- Submit Button -->
                           <button type="submit" class="btn btn-secondary">Add to Cart</button>

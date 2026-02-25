@@ -18,10 +18,5 @@ module.exports.reviewSchema = Joi.object({
 })
 
 module.exports.cartSchema = Joi.object({
-    items: Joi.array().items(
-        Joi.object({
-            product: Joi.string().required(), // Assuming product ID is a string
-            quantity: Joi.number().integer().min(1).required() // Quantity must be a positive integer
-        })
-    ).required()
+    quantity: Joi.number().integer().min(1).max(15).required() // Quantity must be a positive integer
 });

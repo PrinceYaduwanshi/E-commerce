@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
+const Cart= require("./cart.js");
 
 const productSchema = new Schema({
     title:{
@@ -30,11 +31,10 @@ const productSchema = new Schema({
 });
 
 productSchema.post("findOneAndDelete" , async(product)=>{
-    console.log(product.reviews);
-    console.log(product.reviews.length);
+    
     if(product){
         let res = await Review.deleteMany({_id : {$in : product.reviews}});
-        console.log(res);
+        let resCart= await Cart.updateMany({}, {$pull : {items : {product : product._id}}});
     }
 })
 
