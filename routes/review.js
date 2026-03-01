@@ -7,7 +7,7 @@ const ExpressError = require("../utils/ExpressError.js");
 
 const Product = require("../models/product.js");
 const Review = require("../models/review.js");
-const {productSchema , reviewSchema } = require("../schema.js");
+const { reviewSchema } = require("../schema.js");
 
 // handling errors
 const validateReview = (req,res,next)=>{
