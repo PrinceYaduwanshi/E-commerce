@@ -7,10 +7,14 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const User = require("./models/user.js");
+
 // require middlewares 
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname , "/views"));
@@ -58,21 +62,46 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+// initializing passport
+app.use(passport.initialize()); //to use Passport in an Express-based application
+app.use(passport.session()); //if we require persistent login sessions
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 app.use((req , res , next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
 })
 
+// app.get("/demouser", async(req,res)=>{
+//     let fakeUser = new User({
+//         email: "fakeUser@gmail.com",
+//         role: "customer",
+//         username: "fakeuser",
+//     })
+
+//     let newUser= await User.register(fakeUser, "password");
+//     console.log(newUser);
+//     res.send(newUser);
+// })
+
+
 
 // ROUTES
 const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
 const cartRoutes = require("./routes/cart.js");
+const userRoutes = require("./routes/user.js");
 
 app.use("/products" , productRoutes);
 app.use("/products/:id/review" , reviewRoutes);
 app.use("/cart", cartRoutes);
+app.use("/", userRoutes);
 
 
 app.all("*" , (req,res,next)=>{

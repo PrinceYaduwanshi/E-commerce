@@ -9,6 +9,8 @@ const ExpressError = require("../utils/ExpressError.js");
 const Product = require("../models/product.js");
 const {productSchema} = require("../schema.js");
 
+const {isLoggedIn, isAdmin} = require("../middleware.js");
+
 // handling errors
 const validateProduct = (req,res,next)=>{
     let{error} = productSchema.validate(req.body);
@@ -30,11 +32,11 @@ router.get( "/" , wrapAsync(async(req,res) =>{
 
 // create route
 // new route
-router.get("/new" , (req,res)=>{
+router.get("/new" , isLoggedIn, isAdmin, (req,res)=>{
     res.render("products/new.ejs");
 })
 // add route
-router.post("/" , validateProduct, wrapAsync(async(req,res)=>{
+router.post("/" , isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res)=>{
     let newproduct = new Product(req.body.product);
     await newproduct.save();
     req.flash("success" , "Product added Successfully");
@@ -55,7 +57,7 @@ router.get("/:id" , wrapAsync(async(req,res)=>{
 }));
 
 // update route
-router.get("/:id/edit" , wrapAsync(async(req,res)=>{
+router.get("/:id/edit" , isLoggedIn, isAdmin, wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const product = await Product.findById(id);
 
@@ -66,7 +68,7 @@ router.get("/:id/edit" , wrapAsync(async(req,res)=>{
     
     res.render("products/edit.ejs" , {product});
 }));
-router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
+router.put("/:id", isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const editproduct = req.body.product;
     if(!editproduct){
@@ -80,7 +82,7 @@ router.put("/:id", validateProduct, wrapAsync(async(req,res)=>{
 }));
 
 // destroy route
-router.delete("/:id" , wrapAsync(async(req,res)=>{
+router.delete("/:id" , isLoggedIn, isAdmin, wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const deleteproduct = await Product.findByIdAndDelete(id);
 
