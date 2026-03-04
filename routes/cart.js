@@ -9,10 +9,10 @@ const Cart = require("../models/cart.js");
 
 const {isLoggedIn, validateCart} = require("../middleware.js");
 
-router.get("/" ,wrapAsync(async(req,res)=>{
+router.get("/" ,isLoggedIn ,wrapAsync(async(req,res)=>{
     
-    let cart = await Cart.findOne({}).populate("items.product");
-    
+    let cart = await Cart.findOne({user: req.user._id}).populate("items.product");
+
     // handling null items ie items which have been deleted from the products collection but are still present in the cart
     // handled by the post middleware in product model which deletes the items from the cart when a product is deleted
     // cart.items = cart.items.filter(item => item.product !== null);
@@ -34,6 +34,7 @@ router.post("/add/:id", isLoggedIn, validateCart, wrapAsync(async (req, res) => 
     
     const { id } = req.params;
     const product = await Product.findById(id);
+    let userId = req.user._id;
 
     if(!product){
         const err = new ExpressError(404, "Product Not Found");
@@ -46,7 +47,7 @@ router.post("/add/:id", isLoggedIn, validateCart, wrapAsync(async (req, res) => 
         return res.status(400).send("Invalid quantity");
     }
 
-    const cart = await Cart.findOne({});
+    const cart = await Cart.findOne({user: userId});
 
     if (cart) {
         
@@ -63,18 +64,20 @@ router.post("/add/:id", isLoggedIn, validateCart, wrapAsync(async (req, res) => 
         }
         await cart.save();
     } else {
-        const newCart = new Cart({ items: [{ product: id, quantity: quantity }] });
+        const newCart = new Cart({ user: userId, items: [{ product: id, quantity: quantity }] });
         await newCart.save();
     }
     req.flash("success" , "Item Added to Cart");
 
+    console.log(req.get);
+    console.log(req.get("referer"));
     res.redirect("/products");
 }));
 
 router.delete("/:cartId/:id" , isLoggedIn, (wrapAsync(async (req, res)=>{
     let { cartId , id } = req.params;
 
-    const cart = await Cart.findByIdAndUpdate( cartId , {$pull :{ items : {product : id}}});
+    const cart = await Cart.findByIdAndUpdate( {_id: cartId, user: req.user._id} , {$pull :{ items : {product : id}}}, {new: true});
 
     if (cart.items.length === 0) {
         await Cart.findByIdAndDelete(cartId);
