@@ -16,10 +16,10 @@ async function main() {
 
 const initDB = async()=>{
     await Product.deleteMany({});
-    await Product.insertMany(initData.data);
     console.log("data initialized");
     // console.log("before :", initData.data);
-    // initData.data = initData.data.map((obj)=>({...obj ,}))
+    initData.data = initData.data.map((obj)=>({...obj, owner: "69a67c56d59d54117bad6a41"}))
+    await Product.insertMany(initData.data);
     console.log("data :", initData.data);
 }
 initDB();

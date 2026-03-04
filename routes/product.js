@@ -7,20 +7,8 @@ const ExpressError = require("../utils/ExpressError.js");
 
 //require schema
 const Product = require("../models/product.js");
-const {productSchema} = require("../schema.js");
 
-const {isLoggedIn, isAdmin} = require("../middleware.js");
-
-// handling errors
-const validateProduct = (req,res,next)=>{
-    let{error} = productSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(404 , errMsg);
-    }else{
-        next();
-    }
-}
+const {isLoggedIn, isOwner, validateProduct} = require("../middleware.js");
 
 // CRUD OPERRATIONS
 
@@ -32,12 +20,13 @@ router.get( "/" , wrapAsync(async(req,res) =>{
 
 // create route
 // new route
-router.get("/new" , isLoggedIn, isAdmin, (req,res)=>{
+router.get("/new" , isLoggedIn, (req,res)=>{
     res.render("products/new.ejs");
 })
 // add route
-router.post("/" , isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res)=>{
+router.post("/" , isLoggedIn, validateProduct, wrapAsync(async(req,res)=>{
     let newproduct = new Product(req.body.product);
+    newproduct.owner= req.user._id;
     await newproduct.save();
     req.flash("success" , "Product added Successfully");
     res.redirect("/products");  
@@ -46,8 +35,8 @@ router.post("/" , isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res)
 // show route
 router.get("/:id" , wrapAsync(async(req,res)=>{
     let{id} = req.params;
-    const product = await Product.findById(id).populate("reviews");
-
+    // nested populate
+    const product = await Product.findById(id).populate({path: "reviews", populate:{path: "author"}}).populate("owner");
     if(!product){
         req.flash("error" , "Product not found");
         res.redirect("/products");
@@ -57,7 +46,7 @@ router.get("/:id" , wrapAsync(async(req,res)=>{
 }));
 
 // update route
-router.get("/:id/edit" , isLoggedIn, isAdmin, wrapAsync(async(req,res)=>{
+router.get("/:id/edit" , isLoggedIn, isOwner ,wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const product = await Product.findById(id);
 
@@ -68,7 +57,7 @@ router.get("/:id/edit" , isLoggedIn, isAdmin, wrapAsync(async(req,res)=>{
     
     res.render("products/edit.ejs" , {product});
 }));
-router.put("/:id", isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res)=>{
+router.put("/:id", isLoggedIn, isOwner, validateProduct, wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const editproduct = req.body.product;
     if(!editproduct){
@@ -82,7 +71,7 @@ router.put("/:id", isLoggedIn, isAdmin, validateProduct, wrapAsync(async(req,res
 }));
 
 // destroy route
-router.delete("/:id" , isLoggedIn, isAdmin, wrapAsync(async(req,res)=>{
+router.delete("/:id" , isLoggedIn, isOwner, wrapAsync(async(req,res)=>{
     let{id} = req.params;
     const deleteproduct = await Product.findByIdAndDelete(id);
 

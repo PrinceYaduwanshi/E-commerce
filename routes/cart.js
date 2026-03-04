@@ -6,27 +6,13 @@ const ExpressError = require("../utils/ExpressError.js");
 
 const Product = require("../models/product.js");
 const Cart = require("../models/cart.js");
-const {cartSchema} = require("../schema.js");
 
-const validateCart = (req,res,next)=>{
-    let{error} = cartSchema.validate(req.body);
-    
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400 , errMsg);
-    }
-
-    // if(req.params.id != req.body.items[0].product){
-    //     throw new ExpressError(400 , "Product ID in the URL does not match the Product ID in the request body");
-    // }
-
-    next();
-}
+const {isLoggedIn, validateCart} = require("../middleware.js");
 
 router.get("/" ,wrapAsync(async(req,res)=>{
     
     let cart = await Cart.findOne({}).populate("items.product");
-
+    
     // handling null items ie items which have been deleted from the products collection but are still present in the cart
     // handled by the post middleware in product model which deletes the items from the cart when a product is deleted
     // cart.items = cart.items.filter(item => item.product !== null);
@@ -44,7 +30,7 @@ router.get("/" ,wrapAsync(async(req,res)=>{
     }
 })) 
 
-router.post("/add/:id", validateCart, wrapAsync(async (req, res) => {
+router.post("/add/:id", isLoggedIn, validateCart, wrapAsync(async (req, res) => {
     
     const { id } = req.params;
     const product = await Product.findById(id);
@@ -85,7 +71,7 @@ router.post("/add/:id", validateCart, wrapAsync(async (req, res) => {
     res.redirect("/products");
 }));
 
-router.delete("/:cartId/:id" , (wrapAsync(async (req, res)=>{
+router.delete("/:cartId/:id" , isLoggedIn, (wrapAsync(async (req, res)=>{
     let { cartId , id } = req.params;
 
     const cart = await Cart.findByIdAndUpdate( cartId , {$pull :{ items : {product : id}}});

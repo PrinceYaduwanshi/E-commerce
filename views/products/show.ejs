@@ -1,58 +1,176 @@
 <% layout("./layouts/boilerplate") -%>
-<body>
-    <div class="row">
-        <div class="mt-5 offset-2 col-8">
-            <h3><%= product.title %></h3>
-            <div class="card col-4 offset-2 show-card" style="border: none;">
+
+<div class="container mt-5">
+
+    <!-- PRODUCT SECTION -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h3 class="mb-3"><%= product.title %></h3>
+
+            <div class="card shadow-sm border-0">
+
                 <img src="<%=product.image%>" class="card-img-top show-img" alt="product-image">
+
                 <div class="card-body">
-                  <p class="card-text"><i><%= product.description %></i></p>
-                  <p class="card-text">&#8377;<%= product.price?product.price.toLocaleString("en-IN"):"N/A" %></p>
-                </div>
-              </div>
-              <div class="btns mb-3 col-3">
-                <a href="/products/<%=product._id%>/edit" class="btn bg-secondary offset-3 col-3">Edit</a>
-                <form method="post" action="/products/<%=product._id%>?_method=DELETE">
-                    <button class="btn bg-secondary offset-5">Delete</button>
-                </form>
-            </div>
+                    <p class="text-muted mb-1"><i>By <%= product.owner.username %></i></p>
 
-            <br>
-            <hr>
-        </div>
-        <div class=" col-8 offset-2">
-            <h2>Leave a Review</h2>
-            <form method="POST" action="/products/<%=product._id%>/review" novalidate class="needs-validation">
-                <div>
-                    <label for="rating" class="form-label">Rating</label>
-                    <input type="range" min="1" max="5" id="rating" name="review[rating]" class="form-range">
-                </div>
-                <div class="mb-3 mt-3">
-                    <label for="comment" class="form-label">Experience with the product</label>
-                    <textarea name="review[comment]" id="comment" cols="20" rows="5" class="form-control" required></textarea>
-                    <div class="invalid-feedback">Empty</div>
-                </div>
-                  <button class="btn bg-secondary">Submit</button>
-            </form>
+                    <p class="card-text">
+                        <%= product.description %>
+                    </p>
 
-            <br>
-            <hr>
-            <h3>All reviews</h3>
-            <div class="row">
-                <% for(review of product.reviews) { %>
-                    <div class="card col-5 ms-8 mb-3 " style="width: 18rem;">
-                        <div class="card-body">
-                          <h6 class="card-title">username</h6>
-                          <p class="card-text"><%=review.comment%></p>
-                          <p class="card-text"><%= review.rating %>&#9733;</p>&nbsp;
-                          <p class="card-text">Was this review helpful?</p>
-                        </div>
-                        <form method="post" action="/products/<%=product._id%>/review/<%=review._id%>?_method=DELETE">
-                            <button class="btn bg-secondary ms-1">Delete</button>
-                        </form>    
+                    <h5 class="fw-bold">
+                        ₹<%= product.price ? product.price.toLocaleString("en-IN") : "N/A" %>
+                    </h5>
+                </div>
+
+                <!-- BUTTONS -->
+                <% if(currUser && currUser._id.equals(product.owner._id)){ %>
+                    <div class="card-body d-flex gap-2">
+                        <a href="/products/<%=product._id%>/edit" class="btn btn-secondary">
+                            Edit
+                        </a>
+    
+                        <form method="post" action="/products/<%=product._id%>?_method=DELETE">
+                            <button class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
                     </div>
-                <% } %> 
-            </div>           
+                 <% } %>
+
+            </div>
         </div>
     </div>
-</body>
+
+
+    <hr class="my-5">
+
+
+    <!-- REVIEW FORM -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h4 class="mb-3">Leave a Review</h4>
+
+            <% if(currUser){ %>
+                <form method="POST"
+                    action="/products/<%=product._id%>/review"
+                    novalidate
+                    class="needs-validation">
+    
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+    
+                        <input type="range"
+                            min="1"
+                            max="5"
+                            id="rating"
+                            name="review[rating]"
+                            class="form-range">
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">
+                            Experience with the product
+                        </label>
+    
+                        <textarea
+                            name="review[comment]"
+                            id="comment"
+                            rows="4"
+                            class="form-control"
+                            required></textarea>
+    
+                        <div class="invalid-feedback">
+                            Comment cannot be empty
+                        </div>
+                    </div>
+    
+                    <button class="btn btn-secondary">
+                        Submit Review
+                    </button>
+    
+                </form>
+            <% }else{ %>
+                <div class="row justify-content-center mt-5">
+                    <div class="col-md-6">
+
+                        <div class="card text-center shadow-sm border-0 p-4">
+
+                            <h5 class="mb-3 text-muted">
+                                You must be logged in to leave a review
+                            </h5>
+
+                            <a href="/login" class="btn btn-dark">
+                                Login to Continue
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+
+
+    <hr class="my-5">
+
+
+    <!-- REVIEWS -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <h4 class="mb-4">All Reviews</h4>
+
+            <div class="row">
+
+                <% for(review of product.reviews) { %>
+
+                    <div class="col-md-6 mb-3">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                <h6 class="card-title fw-bold">
+                                    <%= review.author.username%>
+                                </h6>
+
+                                <p class="card-text">
+                                    <%= review.comment %>
+                                </p>
+
+                                <p class="card-text text-warning">
+                                    <%= review.rating %> ★
+                                </p>
+
+                                <p class="text-muted small">
+                                    Was this review helpful?
+                                </p>
+
+                                <form method="post"
+                                    action="/products/<%=product._id%>/review/<%=review._id%>?_method=DELETE">
+
+                                    <button class="btn btn-sm btn-danger">
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

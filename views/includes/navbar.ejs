@@ -1,27 +1,64 @@
-<nav class="navbar navbar-expand-md bg-light bg-opacity-1 border-bottom sticky-top ">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/products">
-        <img src="https://i.pinimg.com/474x/a6/96/1e/a6961e8303858361904dedc098363975.jpg" 
-                 alt="Bootstrap" width="50" height="50" style="border-radius: 50%;">
-            <b style="font-weight: 400;">Home</b>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse bg-secondary" id="navbarNav">
-        
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top border-bottom">
+  <div class="container-fluid px-4">
 
-      </div>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        
-        <ul class="navbar-nav ms-auto">
+    <!-- Logo + Home -->
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/products">
+      <img src="https://i.pinimg.com/474x/a6/96/1e/a6961e8303858361904dedc098363975.jpg" 
+           alt="Logo" width="45" height="45" class="rounded-circle">
+      <span class="fw-semibold fs-5">
+        <i class="bi bi-house-door-fill me-1"></i> Home
+      </span>
+    </a>
+
+    <!-- Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+
+      <!-- LEFT SIDE -->
+      <ul class="navbar-nav me-auto ms-3 gap-3">
           <li class="nav-item">
-            <a class="nav-link" href="/products/new">Add New</a>
+            <a class="nav-link fw-medium" href="/products/new">
+              <i class="bi bi-plus-circle me-1"></i> Add New
+            </a>
           </li>
+
+        <li class="nav-item">
+          <a class="nav-link fw-medium" href="/cart">
+            <i class="bi bi-cart3 me-1"></i> Cart
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- RIGHT SIDE -->
+      <ul class="navbar-nav ms-auto gap-3">
+
+        <% if(!currUser) { %>
           <li class="nav-item">
-            <a class="nav-link" href="/cart">Cart</a>
+            <a class="nav-link fw-medium" href="/signup">
+              <i class="bi bi-person-plus me-1"></i> Signup
+            </a>
           </li>
-        </ul>
-      </div>
+  
+          <li class="nav-item">
+            <a class="nav-link fw-medium" href="/login">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Login
+            </a>
+          </li>
+        <% } %>
+        <% if(currUser){ %>
+          <li class="nav-item">
+            <a class="nav-link text-danger fw-medium" href="/logout">
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </a>
+          </li>
+        <% } %>
+
+      </ul>
+
     </div>
-  </nav>
+  </div>
+</nav>
