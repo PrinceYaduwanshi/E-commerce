@@ -66,8 +66,6 @@ module.exports.addToCart = async (req, res) => {
     }
     req.flash("success" , "Item Added to Cart");
 
-    console.log(req.get);
-    console.log(req.get("referer"));
     res.redirect("/products");
 }
 
