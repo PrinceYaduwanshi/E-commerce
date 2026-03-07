@@ -28,8 +28,10 @@ app.use(methodOverride("_method"));
 app.engine("ejs" , ejsMate);
 
 // configure dotenv
-const dotenv = require("dotenv");
-dotenv.config();
+if(process.env.NODE_ENV != "production"){
+    const dotenv = require("dotenv");
+    dotenv.config();
+}
 
 const port = process.env.PORT;
 

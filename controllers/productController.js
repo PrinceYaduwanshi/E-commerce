@@ -14,8 +14,14 @@ module.exports.renderNewForm = (req,res)=>{
 
 
 module.exports.createProduct = async(req,res)=>{
+    let url= req.file.path;
+    let filename= req.file.filename;
+
     let newproduct = new Product(req.body.product);
+
     newproduct.owner= req.user._id;
+    newproduct.image= {url, filename};
+    
     await newproduct.save();
     req.flash("success" , "Product added Successfully");
     res.redirect("/products");  
@@ -45,18 +51,29 @@ module.exports.renderEditForm = async(req,res)=>{
         res.redirect("/products");
     }
     
-    res.render("products/edit.ejs" , {product});
+    let originalImageUrl= product.image.url;
+    originalImageUrl= originalImageUrl.replace("/upload", "/upload/e_pixelate:5/h_150,w_200");
+    res.render("products/edit.ejs" , {product, originalImageUrl});
 }
 
 
 module.exports.updateProduct = async(req,res)=>{
     let{id} = req.params;
     const editproduct = req.body.product;
+
     if(!editproduct){
         throw new ExpressError(404 , "Body Empty");
     }
-    await Product.findByIdAndUpdate(id , editproduct);
 
+    let updatedProduct= await Product.findByIdAndUpdate(id , editproduct, { new: true, runValidators: true });
+
+    if(typeof req.file !== "undefined"){
+        let newUrl= req.file.path;
+        let newFilename= req.file.filename;
+        updatedProduct.image= {url: newUrl, filename: newFilename};    
+        await updatedProduct.save();
+    }
+    
     req.flash("success" , "Product Updated");
 
     res.redirect(`/products/${id}`);

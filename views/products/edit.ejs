@@ -3,7 +3,7 @@
     <div class="row">
     <div class="mt-5 offset-2 col-8">
     <h3>Edit product</h3>
-    <form method="POST" action="/products/<%= product._id%>?_method=PUT" novalidate class="needs-validation">
+    <form method="POST" action="/products/<%= product._id%>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
 
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
@@ -23,10 +23,13 @@
                 Enter a Valid Description
               </div>
         </div>
-
         <div class="mb-3">
-            <label for="image" class="form-label">Image Link</label>
-            <input value="<%= product.image%>"name="product[image]" type="text" class="form-control" required>
+            Original Product Image
+            <img src="<%= originalImageUrl %>">
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Upload New Image</label>
+            <input name="product[image]" type="file" class="form-control">
         </div>
 
         <div class="mb-3 col-4">
