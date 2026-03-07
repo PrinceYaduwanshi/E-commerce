@@ -150,14 +150,15 @@
                                 <p class="text-muted small">
                                     Was this review helpful?
                                 </p>
-
+                                
+                                <% if(currUser && currUser._id.equals(review.author._id)){ %>
                                 <form method="post"
                                     action="/products/<%=product._id%>/review/<%=review._id%>?_method=DELETE">
 
                                     <button class="btn btn-sm btn-danger">
                                         Delete
                                     </button>
-
+                                <% } %>
                                 </form>
 
                             </div>

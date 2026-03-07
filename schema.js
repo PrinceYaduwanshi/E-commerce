@@ -6,7 +6,7 @@ module.exports.productSchema = Joi.object({
         title : Joi.string().pattern(/^[a-zA-Z\s]+$/).required(),
         description : Joi.string().pattern(/^[a-zA-Z0-9\s]+$/).required(),
         image : Joi.string().allow("",null),
-        price : Joi.number().required().min(0)
+        price : Joi.number().required().min(1)
     }).required()
 })
 
