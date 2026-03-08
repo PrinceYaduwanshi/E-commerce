@@ -16,7 +16,7 @@
               <% for(let i = 0; i < cart.items.length; i++) { %>
                 <tr>
                     <th scope="row"><%= i + 1 %>.</th>
-                    <td><a href="/products/<%=cart.items[i].product._id%>"><img src="<%= cart.items[i].product.image %>" class="card-img-top" alt="product-image" style="height: 3rem; width: 3rem;"></a></td>
+                    <td><a href="/products/<%=cart.items[i].product._id%>"><img src="<%=cart.items[i].product.image.url%>" class="card-img-top" alt="product-image" style="height: 3rem; width: 3rem;"></a></td>
                     <td><a href="/products/<%=cart.items[i].product._id%>" style="text-decoration: none; color: black;"><%= cart.items[i].product.title %></a></td>
                     <td><%= cart.items[i].product.price %></td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= cart.items[i].quantity %></td>

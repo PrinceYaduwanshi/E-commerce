@@ -51,3 +51,35 @@ module.exports.logout = (req,res, next)=>{
         res.redirect("/products");
     })
 }
+
+module.exports.renderDeleteForm = (req, res)=>{
+    res.render("users/delete.ejs");
+}
+
+module.exports.deleteUser = async(req, res, next)=>{
+    let {userId}= req.params;
+    let {password} = req.body;
+
+    let user= await User.findById(userId);
+    
+    if(!user){
+        req.flash("error", "User Not Found");
+        res.redirect("/products");
+    }
+
+    let result = await User.authenticate()(user.username, password);
+    
+    // user does not exists or password is incorrect
+    if(!result.user){
+        req.flash("error", "Invalid Password Entered");
+        return res.redirect("/users/delete");
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    req.logout((err)=>{
+        if(err) return next(err);
+    })
+    req.flash("success", "Account Deleted SuccessFully");
+    res.redirect("/products");
+}
