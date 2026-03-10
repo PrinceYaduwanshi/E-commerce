@@ -1,3 +1,9 @@
+// configure dotenv
+if(process.env.NODE_ENV != "production"){
+    const dotenv = require("dotenv");
+    dotenv.config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -5,6 +11,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
 const User = require("./models/user.js");
@@ -27,13 +34,9 @@ app.use(methodOverride("_method"));
 
 app.engine("ejs" , ejsMate);
 
-// configure dotenv
-if(process.env.NODE_ENV != "production"){
-    const dotenv = require("dotenv");
-    dotenv.config();
-}
 
 const port = process.env.PORT;
+const dbUrl = process.env.ATLAS_DB_URL;
 
 main()
     .then(()=>{
@@ -42,7 +45,7 @@ main()
         console.log(err);
     });
 async function main() {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(dbUrl);
 }
 
 
@@ -50,9 +53,20 @@ app.listen( port , ()=>{
     console.log(`app is running on port ${port}`);
 });
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    secret: process.env.SECRET_CODE,
+    touchAfter: 24 * 3600,
+});
+
+store.on("error", (err)=>{
+    console.log("SOME ERROR IN SESSION-STORE", err);
+})
+
 // config sessions
 const sessionOptions = {
-    secret: "secretcode" , 
+    store,
+    secret: process.env.SECRET_CODE, 
     resave : false,
     saveUninitialized : true,
     cookie:{
@@ -94,7 +108,6 @@ app.use((req , res , next)=>{
 // })
 
 
-
 // ROUTES
 const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
@@ -112,7 +125,10 @@ app.all("*" , (req,res,next)=>{
 })
 
 app.use((err,req,res,next)=>{
+    if(res.headersSent){
+        return next(err);
+    }
     let{statusCode=500 , message="some error occured"} = err;
-    res.status(statusCode).render("error.ejs",{err});
+    return res.status(statusCode).render("error.ejs",{err});
     // res.status(statusCode).send(message);
 })

@@ -35,7 +35,7 @@ module.exports.showProduct = async(req,res)=>{
     const product = await Product.findById(id).populate({path: "reviews", populate:{path: "author"}}).populate("owner");
     if(!product){
         req.flash("error" , "Product not found");
-        res.redirect("/products");
+        return res.redirect("/products");
     }
 
     res.render("products/show.ejs" , {product});
@@ -48,7 +48,7 @@ module.exports.renderEditForm = async(req,res)=>{
 
     if(!product){
         req.flash("error" , "Product not found");
-        res.redirect("/products");
+        return res.redirect("/products");
     }
     
     let originalImageUrl= product.image.url;

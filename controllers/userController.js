@@ -16,13 +16,13 @@ module.exports.signUp = async(req,res)=>{
                 return next(err);
             }
             req.flash("success", "User register Successfully");
-            res.redirect("/products");
+            return res.redirect("/products");
         })
 
     }catch(e){
         req.flash("error", e.message);
         console.log(e);
-        res.redirect("/signup");
+        return res.redirect("/signup");
     }
 
 }
@@ -48,7 +48,7 @@ module.exports.logout = (req,res, next)=>{
             return next(err);
         }
         req.flash("success", "Logged Out Successfully");
-        res.redirect("/products");
+        return res.redirect("/products");
     })
 }
 
@@ -64,7 +64,7 @@ module.exports.deleteUser = async(req, res, next)=>{
     
     if(!user){
         req.flash("error", "User Not Found");
-        res.redirect("/products");
+        return res.redirect("/products");
     }
 
     let result = await User.authenticate()(user.username, password);

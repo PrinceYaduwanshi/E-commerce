@@ -21,9 +21,9 @@ module.exports.showCart = async(req,res)=>{
             await Cart.findByIdAndDelete(cart._id);
             res.render("cart/continueShopping.ejs");
         }
-    }else{
-        res.render("cart/continueShopping.ejs");
     }
+
+    return res.render("cart/continueShopping.ejs");
 }
 
 
@@ -82,7 +82,6 @@ module.exports.deleteFromCart = async(req, res)=>{
     req.flash("success" , "Item Removed");
 
     res.redirect("/cart");
-
 
 }
 
